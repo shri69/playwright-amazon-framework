@@ -1,18 +1,26 @@
 import { test, expect } from '@playwright/test';
+import { HomePage } from '../pages/HomePage';
+import { ProductsPage } from '../pages/ProductsPage';
 
-test('has title', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+test.describe('Amazon E2E Tests', () => {
 
-  // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Playwright/);
-});
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/'); // uses baseURL from config
+  });
 
-test('get started link', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+  test('Launch Amazon and verify title', async ({ page }) => {
+    await expect(page).toHaveTitle(/Amazon/);
+  });
 
-  // Click the get started link.
-  await page.getByRole('link', { name: 'Get started' }).click();
+  test('Search product and add to cart', async ({ page }) => {
+    const home = new HomePage(page);
+    const products = new ProductsPage(page);
 
-  // Expects page to have a heading with the name of Installation.
-  await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
+    await home.searchProduct('iphone 14');
+    await products.selectProduct('Apple iPhone 14');
+
+    // temporary wait just to observe
+    await page.waitForTimeout(5000);
+  });
+
 });
